@@ -163,8 +163,9 @@ export default class Game {
         this.setSpacingAndGap();
         for (let pipes = 0; pipes < 20; pipes++)
             this.createPipe(((this.ScreenBounds.Width - this.blockSize) + this.isMobile ? 2000 : 0) + pipes * this.blockSize * this.blockSpacing);
-        window.addEventListener("keyup", this.handleInput.bind(this));
-        window.addEventListener("mousedown", this.handleInput.bind(this));
-        window.addEventListener("click", this.handleInput.bind(this));
+        window.addEventListener("keyup", this.handleInput.bind(this), false);
+        window.addEventListener("mousedown", this.handleInput.bind(this), false);
+        this.SCREEN.addEventListener("touchend", this.handleInput.bind(this), false);
+        this.SCREEN.addEventListener("click", this.handleInput.bind(this), false);
     }
 }
