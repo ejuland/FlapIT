@@ -186,8 +186,8 @@ export class Pipe extends GameObject {
         if (this.Bounds.X + this.Bounds.Width < Character.Bounds.X && !this.awardedToPlayer && !this.collidedWithPlayer && Character.isAlive) {
             this.awardedToPlayer = true;
             Character.Score++;
-            AudioPlayer.playSoundFile(`./score${Character.Score%2}.mp3`);
-            console.log(`./score${Character.Score%2}.mp3`);
+            AudioPlayer.playSoundFile(`./score${Character.Score % 2}.mp3`);
+            console.log(`./score${Character.Score % 2}.mp3`);
             // if(this.scoreSoundIndex >= 2)
             //     this.scoreSoundIndex = 0;
             // window.alert(Character.Score)
@@ -196,9 +196,13 @@ export class Pipe extends GameObject {
     scoreSoundIndex = 0;
 
     render(renderer, score) {
-        this.blocks.forEach(block => {
+        let scored_block = false;
+        this.blocks.forEach((block, blockIndex) => {
             renderer.drawRotatedImage(block.Bounds, block.getAssetForType());
-            renderer.drawBlockScoreBubble(block.Bounds, score);
+            if (block.type == score%2 && !scored_block){
+                renderer.drawBlockScoreBubble(block.Bounds, score);
+                // scored_block = true;
+            }
         });
     }
 
