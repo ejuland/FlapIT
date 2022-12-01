@@ -195,9 +195,10 @@ export class Pipe extends GameObject {
     }
     scoreSoundIndex = 0;
 
-    render(renderer) {
+    render(renderer, score) {
         this.blocks.forEach(block => {
             renderer.drawRotatedImage(block.Bounds, block.getAssetForType());
+            renderer.drawBlockScoreBubble(block.Bounds, score);
         });
     }
 

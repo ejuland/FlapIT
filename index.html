@@ -1,32 +1,50 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <style>
-            html, body{
-                margin: 0;
-                padding: 0;
-                background-color: black;
-            }
-            #screen{
-                background-color: green;
-            }
-            img{
-                visibility: hidden;
-                position: fixed;
-            }
-            *{
-                touch-action: manipulation;
-            }
-        </style>
-    </head>
-    <body>
-        <img id="bg" src="https://i.etsystatic.com/30393702/r/il/ce4bd0/3191220689/il_794xN.3191220689_7472.jpg" alt="">
-        <img id="teams" src="./teams.png" alt="">
-        <img id="jason" src="./jason.png" alt="">
-        <img id="outlook" src="./outlook.png" alt="">
-        <img id="clickup" src="./clickup.png" alt="">
-        <canvas id="screen"></canvas>
-        <script type="module" src="main.js"></script>
-    </body>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: black;
+        }
+
+        #screen {
+            background-color: green;
+            overflow: hidden;
+        }
+
+        img {
+            visibility: hidden;
+            position: fixed;
+        }
+
+        * {
+            touch-action: manipulation;
+            user-select: none;
+            /* supported by Chrome and Opera */
+            -webkit-user-select: none;
+            /* Safari */
+            -khtml-user-select: none;
+            /* Konqueror HTML */
+            -moz-user-select: none;
+            /* Firefox */
+            -ms-user-select: none;
+            /* Internet Explorer/Edge */
+        }
+    </style>
+</head>
+
+<body>
+    <img id="bg" src="https://i.etsystatic.com/30393702/r/il/ce4bd0/3191220689/il_794xN.3191220689_7472.jpg" alt="">
+    <img id="teams" src="./teams.png" alt="">
+    <img id="jason" src="./jason.png" alt="">
+    <img id="outlook" src="./outlook.png" alt="">
+    <img id="clickup" src="./clickup.png" alt="">
+    <canvas id="screen"></canvas>
+    <script type="module" src="main.js"></script>
+</body>
+
 </html>

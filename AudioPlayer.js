@@ -13,7 +13,6 @@ export class AudioAssetPlayer {
     loadAudioAsset(path, callback) {
 
         if (this.audioContext == undefined) {
-            return rej("Hold your horses");
             if (this.AudioContext == undefined)
                 this.AudioContext = window.AudioContext || window.webkitAudioContext;
             this.audioContext = new AudioContext();
@@ -58,12 +57,23 @@ export class AudioAssetPlayer {
         source.loop = false;
         return source;
     }
+    unlockAudioContext(audioCtx) {
+        if (audioCtx.state !== 'suspended') return;
+        const b = document.body;
+        const events = ['touchstart','touchend', 'mousedown','keydown'];
+        events.forEach(e => b.addEventListener(e, unlock, false));
+        function unlock() { audioCtx.resume().then(clean); }
+        function clean() { events.forEach(e => b.removeEventListener(e, unlock)); }
+      }
 
     AudioContext;
     audioContext;
     constructor(callback) {
         this.AudioContext = window.AudioContext || window.webkitAudioContext;
         this.audioContext = new AudioContext();
+        this.unlockAudioContext(this.audioContext);
+        // window.alert("oops!");
+
     }
 
 

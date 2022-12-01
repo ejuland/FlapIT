@@ -12,6 +12,22 @@ export default class Renderer{
         this.CTX.drawImage(asset,bounds.X, bounds.Y, bounds.Width, bounds.Height);
     }
 
+    drawBlockScoreBubble(bounds, score){
+        let centerX = bounds.X + bounds.Width;
+        let centerY = bounds.Y + bounds.Height/8;
+        this.CTX.beginPath();
+        this.CTX.arc(centerX, centerY, bounds.Height/4, 0, 2 * Math.PI, false);
+        this.CTX.fillStyle = 'red';
+        this.CTX.fill();
+        this.CTX.lineWidth = 5;
+        this.CTX.strokeStyle = '#dd0000';
+        this.CTX.stroke();
+        this.CTX.font = '12pt Calibri';
+        this.CTX.fillStyle = 'white';
+        this.CTX.textAlign = 'center';
+        this.CTX.fillText(score, centerX, centerY+6);
+    }
+
     drawRotatedImage(bounds, asset){
         // save the unrotated context of the canvas so we can restore it later
         // the alternative is to untranslate & unrotate after drawing
@@ -25,10 +41,11 @@ export default class Renderer{
     
         // draw the image
         // since the context is rotated, the image will be rotated also
-        this.CTX.drawImage(asset,-bounds.Width/2,-bounds.Width/2);
+        this.CTX.drawImage(asset,-bounds.Width/2,-bounds.Width/2, bounds.Width, bounds.Height);
     
         // we’re done with the rotating so restore the unrotated context
         this.CTX.restore();
+        //this.CTX.scale(window.devicePixelRatio,window.devicePixelRatio);
     }
 
     constructor(ctx){

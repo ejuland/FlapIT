@@ -72,7 +72,7 @@ export default class Game {
     render() {
         this.renderer.drawImage(this.ScreenBounds, document.getElementById("bg"));
         this.character.render(this.renderer);
-        this.pipes.forEach(pipe => pipe.render(this.renderer));
+        this.pipes.forEach(pipe => pipe.render(this.renderer, this.character.Score));
     }
 
     setSpacingAndGap() {
@@ -92,8 +92,10 @@ export default class Game {
             this.blockSpacing = LEVEL_SETTINGS.Extreme.spacing;
         }
 
-        if(this.isMobile)
+        if(this.isMobile){
+            this.blockSpacing+=1;
             this.gapSize+=1;
+        }
     }
 
     gameOver = true;
@@ -134,6 +136,8 @@ export default class Game {
             this.started = true;
             this.GameLoopInterval = setInterval(this.gameLoop.bind(this), (1000 / TARGET_FPS));
             this.audioPlayer = new AudioAssetPlayer();
+            this.audioPlayer.playSoundFile("https://dkihjuum4jcjr.cloudfront.net/ES_ITUNES/Whip%20Whoosh%202/ES_Whip%20Whoosh%202.mp3");
+
         }
         if (this.character.JumpingFrames > 0)
             return;
@@ -154,7 +158,7 @@ export default class Game {
         this.SCREEN = screen;
         this.CTX = this.SCREEN.getContext("2d");
         if (this.isMobile)
-            this.CTX.scale(2,2);
+            this.CTX.scale(window.devicePixelRatio,window.devicePixelRatio);
         this.renderer = new Renderer(this.CTX);
         this.resize();
         this.ScreenBounds = new Bounds(0, 0, this.WIDTH, this.HEIGHT)
