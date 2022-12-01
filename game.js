@@ -133,6 +133,7 @@ export default class Game {
         if (!this.started) {
             this.started = true;
             this.GameLoopInterval = setInterval(this.gameLoop.bind(this), (1000 / TARGET_FPS));
+            this.audioPlayer = new AudioAssetPlayer();
         }
         if (this.character.JumpingFrames > 0)
             return;
@@ -162,7 +163,6 @@ export default class Game {
         this.setSpacingAndGap();
         for (let pipes = 0; pipes < 20; pipes++)
             this.createPipe(((this.ScreenBounds.Width - this.blockSize) + this.isMobile ? 2000 : 0) + pipes * this.blockSize * this.blockSpacing);
-        this.audioPlayer = new AudioAssetPlayer();
         window.addEventListener("keyup", this.handleInput.bind(this));
         window.addEventListener("mousedown", this.handleInput.bind(this));
         window.addEventListener("click", this.handleInput.bind(this));
