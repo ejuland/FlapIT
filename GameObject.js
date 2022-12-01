@@ -36,7 +36,6 @@ export class GameObject {
     }
     constructor(bounds) {
         this.Bounds = bounds;
-        console.log(this.Bounds);
     }
 }
 
@@ -79,8 +78,9 @@ export class Character extends GameObject {
     YVelocity = 0;
     JumpingFrames = 0;
     Score = 0;
+    playedThudSound = false;
 
-    update(ScreenBounds) {
+    update(ScreenBounds, AudioPlayer) {
         if (this.isAlive) {
             if (this.JumpingFrames > 0) {
                 this.JumpingFrames--;
@@ -96,6 +96,10 @@ export class Character extends GameObject {
             this.Bounds.X - 3;
             this.YVelocity += 3.8;
             this.Bounds.Rotation += 1;
+            if (!this.playedThudSound) {
+                this.playedThudSound = true;
+                AudioPlayer.playSoundFile("./impact2.wav", 2);
+            }
         }
 
         if (this.Bounds.Y >= ScreenBounds.Height) {
@@ -107,13 +111,13 @@ export class Character extends GameObject {
                 this.YVelocity += .5;
             this.Bounds.Y += this.YVelocity;
             if (this.Bounds.Rotation < 180)
-                this.Bounds.Rotation+=1.5;
+                this.Bounds.Rotation += 1.5;
         } else if (this.Bounds.Y > 0) {
-            if (this.YVelocity > -10)
-                this.YVelocity -= .8;
+            if (this.YVelocity > -7)
+                this.YVelocity -= 1;
             this.Bounds.Y += this.YVelocity;
             if (this.Bounds.Rotation > 0)
-                this.Bounds.Rotation-=5;
+                this.Bounds.Rotation -= 5;
         }
     }
 
@@ -138,17 +142,19 @@ export class Pipe extends GameObject {
     collidedWithPlayer = false;
     awardedToPlayer = false;
 
-    update(ScreenBounds, Character) {
+    update(ScreenBounds, Character, AudioPlayer) {
         if (this.offScreenLeft) {
-            console.log("Off Screen")
             return;
         }
         if (this.Bounds.X < -this.Bounds.Width) {
             this.offScreenLeft = true;
             return;
         }
-        this.Bounds.X -= 3.7;
+
+        if (Character.isAlive)
+            this.Bounds.X -= 5;
         let blockIndex = 0;
+
         for (let row = 0; row < 10; row++) {
             if (blockIndex < this.blocks.length && (row < this.HoleSlot || row > this.HoleSlot + (this.slotSize - 1))) {
                 let block = this.blocks[blockIndex];
@@ -160,7 +166,10 @@ export class Pipe extends GameObject {
                     if (block.Bounds.boundsIntercept(Character.Bounds)) {
                         block.falling = true;
                         Character.isAlive = false;
+                        if (!this.collidedWithPlayer)
+                            AudioPlayer.playSoundFile("./crash.mp3", .5);
                         this.collidedWithPlayer = true;
+
                     }
                 } else {
                     if (block.Bounds.Y < ScreenBounds.Height + block.Bounds.Height) {
@@ -177,10 +186,14 @@ export class Pipe extends GameObject {
         if (this.Bounds.X + this.Bounds.Width < Character.Bounds.X && !this.awardedToPlayer && !this.collidedWithPlayer && Character.isAlive) {
             this.awardedToPlayer = true;
             Character.Score++;
-            console.log(Character.Score)
+            AudioPlayer.playSoundFile(`./score${Character.Score%2}.mp3`);
+            console.log(`./score${Character.Score%2}.mp3`);
+            // if(this.scoreSoundIndex >= 2)
+            //     this.scoreSoundIndex = 0;
             // window.alert(Character.Score)
         }
     }
+    scoreSoundIndex = 0;
 
     render(renderer) {
         this.blocks.forEach(block => {
@@ -194,7 +207,6 @@ export class Pipe extends GameObject {
         this.Segments = segments;
         this.blockCount = segments;
         this.slotSize = 10 - this.blockCount;
-        console.log(this.blockCount, this.slotSize);
         for (let blocks = 0; blocks < this.blockCount; blocks++) {
             this.blocks.push(new Block(this.Bounds.X, blocks * 90, 0, Math.floor(Math.random() * 3)));
         }

@@ -27,7 +27,6 @@ export class AudioAssetPlayer {
 
         request.onload = () => {
             var audioData = request.response;
-            console.log(this.audioContext);
             this.audioContext.decodeAudioData(audioData, function (buffer) {
                 callback(buffer);
             },
@@ -42,8 +41,14 @@ export class AudioAssetPlayer {
         request.send();
     }
 
+    playSoundFile(file, volume){
+        this.loadAudioAsset(file, (buffer)=>{
+            let src = this.sourceFromBuffer(buffer, volume);
+            src.start();
+        });
+    }
 
-    sourceFromBuffer(buffer, volume) {
+    sourceFromBuffer(buffer, volume = 1) {
         let source = this.audioContext.createBufferSource();
         source.buffer = buffer;
         let gainNode = this.audioContext.createGain();

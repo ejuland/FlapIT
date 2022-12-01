@@ -6,23 +6,23 @@ const TARGET_FPS = 60;
 
 const LEVEL_SETTINGS = {
     Normal:{
-        spacing: 6,
-        gap: 5,
-        threshold:5
-    },
-    Difficult:{
-        spacing: 5,
-        gap: 4,
-        threshold: 10
-    },
-    Hard:{
         spacing: 4,
         gap: 3,
-        threshold: 25
+        threshold:10
+    },
+    Difficult:{
+        spacing: 3,
+        gap: 3,
+        threshold: 3
+    },
+    Hard:{
+        spacing: 2,
+        gap: 4,
+        threshold: 30
     },
     Extreme:{
-        spacing: 4,
-        gap: 4,
+        spacing: 2,
+        gap: 3,
     }
 }
 
@@ -59,8 +59,8 @@ export default class Game {
     update() {
         this.resize();
         this.ScreenBounds = new Bounds(0, 0, this.WIDTH, this.HEIGHT)
-        this.character.update(this.ScreenBounds);
-        this.pipes.forEach(pipe => pipe.update(this.ScreenBounds, this.character));
+        this.character.update(this.ScreenBounds, this.audioPlayer);
+        this.pipes.forEach(pipe => pipe.update(this.ScreenBounds, this.character, this.audioPlayer));
         let removed = this.removeUsedPipes();
         this.setSpacingAndGap();
         for(let pipe = 0; pipe < removed; pipe++)
@@ -98,8 +98,22 @@ export default class Game {
         this.render();
     }
 
+    lastPosition = 3;
+
+    getNewPosition(position){
+        let newPosition = position + Math.floor(Math.random() * 4)-2;
+
+        if(newPosition == this.lastPosition)
+            return this.getNewPosition(position);
+        if(newPosition < 0 || newPosition+this.gapSize > 10)
+            return this.getNewPosition(position);
+        
+        return newPosition;
+    }
+
     createPipe(xOffset){
-        this.pipes.push(new Pipe(Math.floor(Math.random() * 10), 10-this.gapSize, this.ScreenBounds, xOffset));
+        this.lastPosition = this.getNewPosition(this.lastPosition);
+        this.pipes.push(new Pipe(this.lastPosition, 10-this.gapSize, this.ScreenBounds, xOffset));
     }
 
     removeUsedPipes(){
@@ -117,16 +131,17 @@ export default class Game {
         }
         if (this.character.JumpingFrames > 0)
             return;
+        this.audioPlayer.playSoundFile("https://dkihjuum4jcjr.cloudfront.net/ES_ITUNES/Whip%20Whoosh%202/ES_Whip%20Whoosh%202.mp3");
         this.character.isFalling = false;
-        this.character.JumpingFrames = 11;
+        this.character.JumpingFrames = 15;
         this.character.YVelocity = 0;
-        console.log("Wasup")
 
     }
 
     blockSize = 0;
     blockSpacing = 4;
     gapSize = 0;
+    audioPlayer = null;
     constructor(screen) {
 
 
@@ -138,9 +153,11 @@ export default class Game {
         this.blockSize =(this.ScreenBounds.Height / 10);
         this.character = new Character(this.ScreenBounds.Width/2, Math.floor(Math.random() * 300), this.blockSize);
         this.setSpacingAndGap();
-        for(let pipes = 0; pipes < 5; pipes++)
+        for(let pipes = 0; pipes < 20; pipes++)
             this.createPipe((this.ScreenBounds.Width - this.blockSize) +pipes*this.blockSize*this.blockSpacing);
+        this.audioPlayer = new AudioAssetPlayer();
         window.addEventListener("keyup", this.handleInput.bind(this));
         window.addEventListener("mousedown", this.handleInput.bind(this));
+        window.addEventListener("touchend", this.handleInput.bind(this));
     }
 }
