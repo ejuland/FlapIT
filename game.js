@@ -207,19 +207,19 @@ export default class Game {
                 attempts = parseInt(info_string.get("attempt"));
             if (isNaN(attempts))
                 attempts = 0;
-            if (attempts == 0) {
+            if (attempts == 1) {
                 this.audioPlayer.playSoundFile("./bg_special_2.mp3", 1, (function (src) {
                     console.log(src);
                     this.bg_music = src;
                 }).bind(this));
-            }else if (attempts == 1) {
-                this.audioPlayer.playSoundFile("./bg_music_1.mp3", 1, (function (src) {
+            }else if (attempts == 0) {
+                this.audioPlayer.playSoundFile("./bg_special_4.mp3", 2, (function (src) {
                     console.log(src);
                     this.bg_music = src;
                 }).bind(this));
             }
-            else if (attempts%5 == 0) {
-                this.audioPlayer.playSoundFile("./bg_special_" + (Math.ceil(Math.random() * 3)) + ".mp3", 1, (function (src) {
+            else if (attempts%2 == 0) {
+                this.audioPlayer.playSoundFile("./bg_special_" + (Math.ceil(Math.random() * 4)) + ".mp3", 1, (function (src) {
                     console.log(src);
                     this.bg_music = src;
                 }).bind(this));

@@ -96,6 +96,8 @@ export class Character extends GameObject {
             case "todd":
             case "mitch":
             case "sasha":
+            case "linda":
+            case "lynsey":
                 this.playerType = player+"_";
                 break;
             default:
