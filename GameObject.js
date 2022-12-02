@@ -121,10 +121,24 @@ export class Character extends GameObject {
         }
     }
 
+    currentFrame = 1;
+    animationDirection = 1;
     render(renderer) {
         renderer.outlineBounds(this.Bounds);
-        renderer.drawRotatedImage(this.Bounds, document.getElementById("jason"));
-
+        let ponyBounds = new Bounds(this.Bounds.X - this.Bounds.Width / 2, this.Bounds.Y - this.Bounds.Height / 2, this.Bounds.Width * 2, this.Bounds.Height * 2);
+        ponyBounds.Rotation = this.Bounds.Rotation;
+        console.log("frame" + this.currentFrame);
+        renderer.drawRotatedImage(ponyBounds, document.getElementById("frame" + this.currentFrame));
+        this.currentFrame += this.animationDirection;
+        if (this.currentFrame > 3) {
+            this.animationDirection = -1;
+            this.currentFrame = 3;
+        }
+        else if (this.currentFrame < 1) {
+            this.animationDirection = 1;
+            this.currentFrame = 1;
+        } 
+        
     }
 
     constructor(x, y, size) {
@@ -142,7 +156,7 @@ export class Pipe extends GameObject {
     collidedWithPlayer = false;
     awardedToPlayer = false;
 
-    update(ScreenBounds, Character, AudioPlayer) {
+    update(ScreenBounds, Character, AudioPlayer, speed = 3.5) {
         if (this.offScreenLeft) {
             return;
         }
@@ -152,7 +166,7 @@ export class Pipe extends GameObject {
         }
 
         if (Character.isAlive)
-            this.Bounds.X -= 5;
+            this.Bounds.X -= speed;
         let blockIndex = 0;
 
         for (let row = 0; row < 10; row++) {
@@ -186,7 +200,10 @@ export class Pipe extends GameObject {
         if (this.Bounds.X + this.Bounds.Width < Character.Bounds.X && !this.awardedToPlayer && !this.collidedWithPlayer && Character.isAlive) {
             this.awardedToPlayer = true;
             Character.Score++;
-            AudioPlayer.playSoundFile(`./score${Character.Score % 2}.mp3`);
+            if (Character.Score % 5 == 0 || Character.Score % 13 == 0)
+                AudioPlayer.playSoundFile(`./score${Character.Score % 2}.mp3`);
+            else
+                AudioPlayer.playSoundFile(`./point.mp3`);
             console.log(`./score${Character.Score % 2}.mp3`);
             // if(this.scoreSoundIndex >= 2)
             //     this.scoreSoundIndex = 0;
@@ -199,9 +216,9 @@ export class Pipe extends GameObject {
         let scored_block = false;
         this.blocks.forEach((block, blockIndex) => {
             renderer.drawRotatedImage(block.Bounds, block.getAssetForType());
-            if (block.type == score%2 && !scored_block){
+            if (block.type == score % 2 && !scored_block) {
                 renderer.drawBlockScoreBubble(block.Bounds, score);
-                // scored_block = true;
+                scored_block = true;
             }
         });
     }

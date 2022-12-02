@@ -5,24 +5,25 @@ import { Bounds, Block, Pipe, Character } from "./GameObject.js";
 const TARGET_FPS = 60;
 
 const LEVEL_SETTINGS = {
-    Normal: {
-        spacing: 4,
-        gap: 3,
-        threshold: 10
+    Easy:{
+        block_space: 4,
+        opening_gap: 4,
+        pipe_speed: 3
     },
-    Difficult: {
-        spacing: 3,
-        gap: 3,
-        threshold: 3
+    Normal:{
+        block_space: 4,
+        opening_gap: 4,
+        pipe_speed: 4
     },
-    Hard: {
-        spacing: 2,
-        gap: 4,
-        threshold: 30
+    Hard:{
+        block_space: 4,
+        opening_gap: 4,
+        pipe_speed: 5
     },
-    Extreme: {
-        spacing: 2,
-        gap: 3,
+    Harder:{
+        block_space: 4,
+        opening_gap: 3,
+        pipe_speed: 6
     }
 }
 
@@ -58,15 +59,20 @@ export default class Game {
     inputLock = false;
     started = false;
     totalPipesPassed = 0;
+    pipeSpeed = 3.5;
     update() {
         this.resize();
         this.ScreenBounds = new Bounds(0, 0, this.WIDTH, this.HEIGHT)
-        this.character.update(this.ScreenBounds, this.audioPlayer);
-        this.pipes.forEach(pipe => pipe.update(this.ScreenBounds, this.character, this.audioPlayer));
-        let removed = this.removeUsedPipes();
         this.setSpacingAndGap();
-        for (let pipe = 0; pipe < removed; pipe++)
-            this.createPipe(this.pipes[this.pipes.length - 1].Bounds.X + this.blockSize * this.blockSpacing)
+        this.character.update(this.ScreenBounds, this.audioPlayer);
+        this.pipes.forEach(pipe =>{
+             pipe.update(this.ScreenBounds, this.character, this.audioPlayer, this.pipeSpeed);
+             if(pipe.offScreenLeft){
+                let lastPipeBounds = this.pipes[this.pipes.length-1].Bounds;
+                this.createPipe((lastPipeBounds.X+this.blockSize)+(this.blockSize*this.blockSpacing));
+             }
+        });
+        this.removeUsedPipes();
     }
 
     render() {
@@ -74,27 +80,40 @@ export default class Game {
         this.character.render(this.renderer);
         this.pipes.forEach(pipe => pipe.render(this.renderer, this.character.Score));
     }
-
+    level = 0;
+    levelGapOffset = 0;
     setSpacingAndGap() {
-        if (this.totalPipesPassed < LEVEL_SETTINGS.Normal.threshold) {
-            this.gapSize = LEVEL_SETTINGS.Normal.gap;
-            this.blockSpacing = LEVEL_SETTINGS.Normal.spacing;
+        switch(this.pipesCreated){
+            case 0:
+                this.gapSize = LEVEL_SETTINGS.Easy.opening_gap;
+                this.blockSpacing = LEVEL_SETTINGS.Easy.block_space;
+            break;
+            case 5:
+                this.gapSize = LEVEL_SETTINGS.Normal.opening_gap;
+                this.blockSpacing = LEVEL_SETTINGS.Normal.block_space;
+            break;
+            case 15:
+                this.gapSize = LEVEL_SETTINGS.Hard.opening_gap;
+                this.blockSpacing = LEVEL_SETTINGS.Hard.block_space;
+            break;
+            case 30:
+                this.gapSize = LEVEL_SETTINGS.Harder.opening_gap;
+                this.blockSpacing = LEVEL_SETTINGS.Harder.block_space;
+            break;
         }
-        else if (this.totalPipesPassed > LEVEL_SETTINGS.Normal.threshold && this.totalPipesPassed < LEVEL_SETTINGS.Difficult.threshold) {
-            this.gapSize = LEVEL_SETTINGS.Difficult.gap;
-            this.blockSpacing = LEVEL_SETTINGS.Difficult.spacing;
-        }
-        else if (this.totalPipesPassed > LEVEL_SETTINGS.Difficult.threshold && this.totalPipesPassed < LEVEL_SETTINGS.Hard.threshold) {
-            this.gapSize = LEVEL_SETTINGS.Hard.gap;
-            this.blockSpacing = LEVEL_SETTINGS.Hard.spacing;
-        } else {
-            this.gapSize = LEVEL_SETTINGS.Extreme.gap;
-            this.blockSpacing = LEVEL_SETTINGS.Extreme.spacing;
-        }
-
-        if(this.isMobile){
-            this.blockSpacing+=1;
-            this.gapSize+=1;
+        switch(this.totalPipesPassed){
+            case 0:
+                this.pipeSpeed = LEVEL_SETTINGS.Easy.pipe_speed;
+            break;
+            case 5:
+                this.pipeSpeed = LEVEL_SETTINGS.Normal.pipe_speed;
+            break;
+            case 15:
+                this.pipeSpeed = LEVEL_SETTINGS.Hard.pipe_speed;
+            break;
+            case 30:
+                this.pipeSpeed = LEVEL_SETTINGS.Harder.pipe_speed;
+            break;
         }
     }
 
@@ -108,19 +127,19 @@ export default class Game {
     lastPosition = 3;
 
     getNewPosition(position) {
-        let newPosition = position + Math.floor(Math.random() * 4) - 2;
+        let newPosition = position + Math.floor(Math.random() * this.gapSize*2)-this.gapSize;
 
-        if (newPosition == this.lastPosition)
-            return this.getNewPosition(position);
         if (newPosition < 0 || newPosition + this.gapSize > 10)
             return this.getNewPosition(position);
 
         return newPosition;
     }
 
+    pipesCreated = 0;
     createPipe(xOffset) {
         this.lastPosition = this.getNewPosition(this.lastPosition);
         this.pipes.push(new Pipe(this.lastPosition, 10 - this.gapSize, this.ScreenBounds, xOffset));
+        this.pipesCreated++;
     }
 
     removeUsedPipes() {
@@ -165,8 +184,8 @@ export default class Game {
         this.blockSize = (this.ScreenBounds.Height / 10);
         this.character = new Character(!this.isMobile ? this.ScreenBounds.Width / 2 : this.blockSize, Math.floor(Math.random() * 300), this.blockSize);
         this.setSpacingAndGap();
-        for (let pipes = 0; pipes < 20; pipes++)
-            this.createPipe(((this.ScreenBounds.Width - this.blockSize) + this.isMobile ? 2000 : 0) + pipes * this.blockSize * this.blockSpacing);
+        for (let pipes = 0; pipes < 5; pipes++)
+            this.createPipe((((this.ScreenBounds.Width - this.blockSize) + this.isMobile ? 500 : 1000)) + pipes * this.blockSize * this.blockSpacing);
         window.addEventListener("keyup", this.handleInput.bind(this), false);
         window.addEventListener("mousedown", this.handleInput.bind(this), false);
         this.SCREEN.addEventListener("touchend", this.handleInput.bind(this), false);
