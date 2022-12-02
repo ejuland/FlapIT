@@ -76,6 +76,16 @@
             visibility: hidden;
         }
 
+        #display{
+            
+            width: 300px;
+            height: 300px;
+            display: block;
+            margin: auto;
+            position: relative;
+            background-size: contain;
+        }
+
         @media only screen and (max-width: 500px) {
             .game_info {
                 font-size: 25px;
@@ -124,14 +134,16 @@
         <h1>NOTICE OF TERMINATION</h1>
         <h2>Score: {SCORE}</h2>
         <label>We are sorry, but you have failed to help our brave and fearless leaders avoid getting caught up in the
-            mundane. Due to this careless blunder we unfortunatley have to let you go.</label>
+            mundane. Due to this careless blunder, we unfortunatley have to let you go.</label>
         <a href="./game.html?attempt={ATTEMPTS}">Try Again?</a>
         <a href="./index.html">Choose New Character</a>
     </div>
     <div id="start" class="game_info">
         <h1>Goal</h1>
+        <label>Make sure that your supervisor doesnt get sidetracked by any rogue messages or tasks so they can get their projects done in time for the holidays!</label>
         <label>Tap the screen repeatedly to reach your goal! Don't hit any obstacles along the way.</label>
         <label>Tap Anywhere to Begin</label>
+        <div id="display"  style=""></div>
     </div>
     <canvas id="screen"></canvas>
     <script type="module" src="main.js"></script>

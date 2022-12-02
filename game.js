@@ -244,6 +244,8 @@ export default class Game {
         this.ScreenBounds = new Bounds(0, 0, this.WIDTH, this.HEIGHT)
         this.blockSize = (this.ScreenBounds.Height / 10);
         this.character = new Character(!this.isMobile ? this.ScreenBounds.Width / 2 : this.blockSize, Math.floor(Math.random() * 300), this.blockSize);
+        this.character.getCharacterImageAsset();
+        document.getElementById("display").style.backgroundImage = `URL(./character_frame_${this.character.playerType}1.png)`;
         this.setSpacingAndGap();
         let startingOffset = (((this.ScreenBounds.Width - this.blockSize) + (this.isMobile ? 500 : 1000)));
         console.log("Starting Offset:" + startingOffset);
