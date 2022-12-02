@@ -127,7 +127,6 @@ export class Character extends GameObject {
         renderer.outlineBounds(this.Bounds);
         let ponyBounds = new Bounds(this.Bounds.X - this.Bounds.Width / 2, this.Bounds.Y - this.Bounds.Height / 2, this.Bounds.Width * 2, this.Bounds.Height * 2);
         ponyBounds.Rotation = this.Bounds.Rotation;
-        console.log("frame" + this.currentFrame);
         renderer.drawRotatedImage(ponyBounds, document.getElementById("frame" + this.currentFrame));
         this.currentFrame += this.animationDirection;
         if (this.currentFrame > 3) {

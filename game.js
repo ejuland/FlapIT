@@ -5,22 +5,22 @@ import { Bounds, Block, Pipe, Character } from "./GameObject.js";
 const TARGET_FPS = 60;
 
 const LEVEL_SETTINGS = {
-    Easy:{
+    Easy: {
         block_space: 4,
         opening_gap: 4,
         pipe_speed: 3
     },
-    Normal:{
+    Normal: {
         block_space: 4,
         opening_gap: 4,
         pipe_speed: 4
     },
-    Hard:{
+    Hard: {
         block_space: 4,
         opening_gap: 4,
         pipe_speed: 5
     },
-    Harder:{
+    Harder: {
         block_space: 4,
         opening_gap: 3,
         pipe_speed: 6
@@ -45,7 +45,6 @@ export default class Game {
         let newHeight = this.WIDTH
         if (this.WIDTH / window.devicePixelRatio < 500)
             this.isMobile = true;
-        console.log(this.isMobile);
         this.SCREEN.setAttribute("width", window.innerWidth);
         this.SCREEN.setAttribute("height", window.innerHeight);
 
@@ -65,12 +64,12 @@ export default class Game {
         this.ScreenBounds = new Bounds(0, 0, this.WIDTH, this.HEIGHT)
         this.setSpacingAndGap();
         this.character.update(this.ScreenBounds, this.audioPlayer);
-        this.pipes.forEach(pipe =>{
-             pipe.update(this.ScreenBounds, this.character, this.audioPlayer, this.pipeSpeed);
-             if(pipe.offScreenLeft){
-                let lastPipeBounds = this.pipes[this.pipes.length-1].Bounds;
-                this.createPipe((lastPipeBounds.X+this.blockSize)+(this.blockSize*this.blockSpacing));
-             }
+        this.pipes.forEach(pipe => {
+            pipe.update(this.ScreenBounds, this.character, this.audioPlayer, this.pipeSpeed);
+            if (pipe.offScreenLeft) {
+                let lastPipeBounds = this.pipes[this.pipes.length - 1].Bounds;
+                this.createPipe((lastPipeBounds.X + this.blockSize) + (this.blockSize * this.blockSpacing));
+            }
         });
         this.removeUsedPipes();
     }
@@ -83,37 +82,37 @@ export default class Game {
     level = 0;
     levelGapOffset = 0;
     setSpacingAndGap() {
-        switch(this.pipesCreated){
+        switch (this.pipesCreated) {
             case 0:
                 this.gapSize = LEVEL_SETTINGS.Easy.opening_gap;
                 this.blockSpacing = LEVEL_SETTINGS.Easy.block_space;
-            break;
+                break;
             case 5:
                 this.gapSize = LEVEL_SETTINGS.Normal.opening_gap;
                 this.blockSpacing = LEVEL_SETTINGS.Normal.block_space;
-            break;
+                break;
             case 15:
                 this.gapSize = LEVEL_SETTINGS.Hard.opening_gap;
                 this.blockSpacing = LEVEL_SETTINGS.Hard.block_space;
-            break;
+                break;
             case 30:
                 this.gapSize = LEVEL_SETTINGS.Harder.opening_gap;
                 this.blockSpacing = LEVEL_SETTINGS.Harder.block_space;
-            break;
+                break;
         }
-        switch(this.totalPipesPassed){
+        switch (this.totalPipesPassed) {
             case 0:
                 this.pipeSpeed = LEVEL_SETTINGS.Easy.pipe_speed;
-            break;
+                break;
             case 5:
                 this.pipeSpeed = LEVEL_SETTINGS.Normal.pipe_speed;
-            break;
+                break;
             case 15:
                 this.pipeSpeed = LEVEL_SETTINGS.Hard.pipe_speed;
-            break;
+                break;
             case 30:
                 this.pipeSpeed = LEVEL_SETTINGS.Harder.pipe_speed;
-            break;
+                break;
         }
     }
 
@@ -127,7 +126,7 @@ export default class Game {
     lastPosition = 3;
 
     getNewPosition(position) {
-        let newPosition = position + Math.floor(Math.random() * this.gapSize*2)-this.gapSize;
+        let newPosition = position + Math.floor(Math.random() * this.gapSize * 2) - this.gapSize;
 
         if (newPosition < 0 || newPosition + this.gapSize > 10)
             return this.getNewPosition(position);
@@ -155,11 +154,11 @@ export default class Game {
             this.started = true;
             this.GameLoopInterval = setInterval(this.gameLoop.bind(this), (1000 / TARGET_FPS));
             this.audioPlayer = new AudioAssetPlayer();
-            this.audioPlayer.playSoundFile("https://dkihjuum4jcjr.cloudfront.net/ES_ITUNES/Whip%20Whoosh%202/ES_Whip%20Whoosh%202.mp3");
-
+            this.audioPlayer.playSoundFile("./bg_music_" + (Math.ceil(Math.random() * 4)) + ".mp3");
         }
         if (this.character.JumpingFrames > 0)
             return;
+
         this.audioPlayer.playSoundFile("https://dkihjuum4jcjr.cloudfront.net/ES_ITUNES/Whip%20Whoosh%202/ES_Whip%20Whoosh%202.mp3");
         this.character.isFalling = false;
         this.character.JumpingFrames = 15;
@@ -177,7 +176,7 @@ export default class Game {
         this.SCREEN = screen;
         this.CTX = this.SCREEN.getContext("2d");
         if (this.isMobile)
-            this.CTX.scale(window.devicePixelRatio,window.devicePixelRatio);
+            this.CTX.scale(window.devicePixelRatio, window.devicePixelRatio);
         this.renderer = new Renderer(this.CTX);
         this.resize();
         this.ScreenBounds = new Bounds(0, 0, this.WIDTH, this.HEIGHT)
