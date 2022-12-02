@@ -79,71 +79,101 @@ export class Character extends GameObject {
     JumpingFrames = 0;
     Score = 0;
     playedThudSound = false;
+    playerType = "";
 
-    update(ScreenBounds, AudioPlayer) {
-        if (this.isAlive) {
-            if (this.JumpingFrames > 0) {
-                this.JumpingFrames--;
-                this.isFalling = false;
-            } else {
-                this.isFalling = true;
-            }
-            this.Bounds.Height = ScreenBounds.Height / 10;
-            this.Bounds.Width = this.Bounds.Height;
-            // this.Bounds.X += 1.7;
-        } else {
-            this.Bounds.Y += this.YVelocity;
-            this.Bounds.X - 3;
-            this.YVelocity += 3.8;
-            this.Bounds.Rotation += 1;
-            if (!this.playedThudSound) {
-                this.playedThudSound = true;
-                AudioPlayer.playSoundFile("./impact2.wav", 2);
-            }
-        }
-
-        if (this.Bounds.Y >= ScreenBounds.Height) {
-            this.isAlive = false;
+    getCharacterImageAsset() {
+        if(this.playerType != "")
             return;
-        }
-        if (this.isFalling) {
-            if (this.YVelocity < 15)
-                this.YVelocity += .5;
-            this.Bounds.Y += this.YVelocity;
-            if (this.Bounds.Rotation < 180)
-                this.Bounds.Rotation += 1.5;
-        } else if (this.Bounds.Y > 0) {
-            if (this.YVelocity > -7)
-                this.YVelocity -= 1;
-            this.Bounds.Y += this.YVelocity;
-            if (this.Bounds.Rotation > 0)
-                this.Bounds.Rotation -= 5;
+        let info_string = new URLSearchParams(window.location.search);
+        let player = 0;
+        if (info_string.has("character"))
+            player = info_string.get("character");
+        switch (player){
+            case "brian":
+            case "caleb":
+            case "jason":
+            case "kire":
+            case "todd":
+            case "mitch":
+            case "sasha":
+                this.playerType = player+"_";
+                break;
+            default:
+                this.playerType = "frame";
+                break;
         }
     }
 
-    currentFrame = 1;
-    animationDirection = 1;
-    render(renderer) {
-        renderer.outlineBounds(this.Bounds);
-        let ponyBounds = new Bounds(this.Bounds.X - this.Bounds.Width / 2, this.Bounds.Y - this.Bounds.Height / 2, this.Bounds.Width * 2, this.Bounds.Height * 2);
-        ponyBounds.Rotation = this.Bounds.Rotation;
-        renderer.drawRotatedImage(ponyBounds, document.getElementById("frame" + this.currentFrame));
-        this.currentFrame += this.animationDirection;
-        if (this.currentFrame > 3) {
-            this.animationDirection = -1;
-            this.currentFrame = 3;
-        }
-        else if (this.currentFrame < 1) {
-            this.animationDirection = 1;
-            this.currentFrame = 1;
-        } 
-        
-    }
+        update(ScreenBounds, AudioPlayer) {
+            if (this.isAlive) {
+                if (this.JumpingFrames > 0) {
+                    this.JumpingFrames--;
+                    this.isFalling = false;
+                } else {
+                    this.isFalling = true;
+                }
+                this.Bounds.Height = ScreenBounds.Height / 10;
+                this.Bounds.Width = this.Bounds.Height;
+                // this.Bounds.X += 1.7;
+            } else {
+                this.Bounds.Y += this.YVelocity;
+                this.Bounds.X - 3;
+                this.YVelocity += 3.8;
+                this.Bounds.Rotation += 1;
+                if (!this.playedThudSound) {
+                    this.playedThudSound = true;
+                    AudioPlayer.playSoundFile("./impact2.wav", 2);
+                }
+            }
 
-    constructor(x, y, size) {
-        super(new Bounds(x, y, size, size));
+            if (this.Bounds.Y >= ScreenBounds.Height+this.Bounds.Height-2 && this.isAlive && this.Score < 1) {
+                this.Bounds.Y = ScreenBounds.Height;
+                return;
+            }else if(this.Score > 1 && this.Bounds.Y >= ScreenBounds.Height+this.Bounds.Height-2)
+                {
+                    this.isAlive = false;
+                    return;
+                }
+            if (this.isFalling) {
+                if (this.YVelocity < 15)
+                    this.YVelocity += .5;
+                this.Bounds.Y += this.YVelocity;
+                if (this.Bounds.Rotation < 180)
+                    this.Bounds.Rotation += 1.5;
+            } else if (this.Bounds.Y > 0) {
+                if (this.YVelocity > -7)
+                    this.YVelocity -= 1;
+                this.Bounds.Y += this.YVelocity;
+                if (this.Bounds.Rotation > 0)
+                    this.Bounds.Rotation -= 5;
+            }
+
+        }
+
+        currentFrame = 1;
+        animationDirection = 1;
+        render(renderer) {
+            renderer.outlineBounds(this.Bounds);
+            let ponyBounds = new Bounds(this.Bounds.X - this.Bounds.Width / 2, this.Bounds.Y - this.Bounds.Height / 2, this.Bounds.Width * 2, this.Bounds.Height * 2);
+            ponyBounds.Rotation = this.Bounds.Rotation;
+            this.getCharacterImageAsset();
+            renderer.drawRotatedImage(ponyBounds, document.getElementById(this.playerType + this.currentFrame));
+            this.currentFrame += this.animationDirection;
+            if (this.currentFrame > 3) {
+                this.animationDirection = -1;
+                this.currentFrame = 3;
+            }
+            else if (this.currentFrame < 1) {
+                this.animationDirection = 1;
+                this.currentFrame = 1;
+            }
+
+        }
+
+        constructor(x, y, size) {
+            super(new Bounds(x, y, size, size));
+        }
     }
-}
 
 export class Pipe extends GameObject {
     Segments = 10;

@@ -10,17 +10,9 @@
         body {
             margin: 0;
             padding: 0;
-            background-color: black;
-        }
-
-        #screen {
-            background-color: green;
-            overflow: hidden;
-        }
-
-        img {
-            visibility: hidden;
-            position: fixed;
+            background-color: #F7F7F7;
+            width: 100%;
+            height: 100%;
         }
 
         * {
@@ -76,13 +68,86 @@
             visibility: hidden;
         }
 
+        #character_select {
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+        }
+
+        #characters_container {
+            display: flex;
+            justify-content: space-evenly;
+            flex-wrap: wrap;
+
+        }
+
+        .character_link {
+            width: 100px;
+            height: 100px;
+            background-color: red;
+            background-size: contain;
+            display: block;
+            padding: auto;
+            transition: linear .5s;
+            border-radius: 100%;
+            border: 2px solid rgba(48, 48, 48, 0.322);
+            background-repeat: no-repeat;
+            margin: 15px;
+
+        }
+
+        .character_link:hover {
+            width: 150px;
+            height: 150px;
+            transition: linear .5s;
+        }
+
+        .brian {
+            background-image: url("./brian.png");
+            background-color: #281E3B;
+        }
+
+        .caleb {
+            background-image: url("./caleb.png");
+            background-color: #E5B237;
+        }
+        
+        .jason {
+            background-image: url("./jason.png");
+            background-color: rgb(134, 209, 198);
+        }
+        
+        .kire {
+            background-image: url("./kire.png");
+            background-color: #D17159;
+        }
+
+        .todd {
+            background-image: url("./todd.png");
+            background-color: rgb(134, 209, 198);
+        }
+
+        .mitch {
+            background-image: url("./mitch.png");
+            background-color: #E5B237;
+        }
+
+        .sasha {
+            background-image: url("./sasha.png");
+            background-color: #F3EDF8;
+        }
+
         @media only screen and (max-width: 500px) {
             .game_info {
                 font-size: 25px;
                 text-shadow: 1px 1px rgba(48, 48, 48, 0.322);
 
             }
-            .game_info label{
+
+            .game_info label {
                 font-size: 15px;
             }
         }
@@ -90,29 +155,56 @@
 </head>
 
 <body>
-    <img id="bg" src="https://i.etsystatic.com/30393702/r/il/ce4bd0/3191220689/il_794xN.3191220689_7472.jpg" alt="">
-    <img id="teams" src="./teams.png" alt="">
-    <img id="jason" src="./jason.png" alt="">
-    <img id="frame1" src="./character_frame_1.png" alt="">
-    <img id="frame2" src="./character_frame_2.png" alt="">
-    <img id="frame3" src="./character_frame_3.png" alt="">
-    <img id="outlook" src="./outlook.png" alt="">
-    <img id="clickup" src="./clickup.png" alt="">
     <div id="try_again" class="game_info hidden">
         <h1>NOTICE OF TERMINATION</h1>
         <h2>Score: {SCORE}</h2>
-        <label>We are sorry, but you have failed to help our brave and fearless leaders avoid getting caught up in the mundane. Due to this careless blunder we unfortunatley have to let you go.</label>
-        <a href="./index.html?attempt={ATTEMPTS}">Try Again?</a>
+        <label>We are sorry, but you have failed to help our brave and fearless leaders avoid getting caught up in the
+            mundane. Due to this careless blunder we unfortunatley have to let you go.</label>
+        <a href="./game.html?attempt={ATTEMPTS}">Try Again?</a>
     </div>
-    <div id="start" class="game_info">
+    <div id="wait" class="game_info ">
+        <h1>Wait for it...</h1>
+    </div>
+    <div id="start" class="game_info ">
         <h1>OFFER OF EMPLOYMENT</h1>
         <label>The holidays can be a rough time to balance work and family. To assist with that, you have been hired to
             help navigate one of our brave supervisors through daily mundane tasks on the wings of Victory! Don't
             disappoint us! Their Christmas depends on you!</label>
-        <label>Tap Anywhere to Begin</label>
-    </div>
-    <canvas id="screen"></canvas>
-    <script type="module" src="main.js"></script>
+            <label>Tap Anywhere to Begin</label>
+        </div>
+        <div id="character_select">
+            <h1>Select a Supervisor That You Want to Help Navigate the Christmas Crazy!</h1>
+            <div id="characters_container">
+                <a class="character_link brian" href="./game.html?character=brian"> </a>
+                <a class="character_link caleb" href="./game.html?character=caleb"></a>
+                <a class="character_link jason" href="./game.html?character=jason"></a>
+                <a class="character_link kire" href="./game.html?character=kire"></a>
+                <a class="character_link todd" href="./game.html?character=todd"></a>
+                <a class="character_link mitch" href="./game.html?character=mitch"></a>
+                <a class="character_link sasha" href="./game.html?character=sasha"></a>
+            </div>
+        </div>
+
+    <script type="module">
+        import { AudioAssetPlayer } from "./AudioPlayer.js";
+        let started = false;
+        function handleInput() {
+            if(started)
+                return;
+            started = true;
+            let AudioPlayer = new AudioAssetPlayer();
+            AudioPlayer.playSoundFile("character_select.mp3", 2);
+            document.getElementById("start").classList.add("hidden")
+            setTimeout(() => {
+                document.getElementById("wait").classList.add("hidden")
+                AudioPlayer.playSoundFile("choose_character.mp3", 1);
+            }, 7000);
+        }
+        window.addEventListener("keyup", handleInput, false);
+        window.addEventListener("mousedown", handleInput, false);
+        window.addEventListener("touchend", handleInput, false);
+        window.addEventListener("click", handleInput, false);
+    </script>
 </body>
 
 </html>

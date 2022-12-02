@@ -7,12 +7,12 @@ const TARGET_FPS = 60;
 const LEVEL_SETTINGS = {
     Easy: {
         block_space: 4,
-        opening_gap: 4,
+        opening_gap: 6,
         pipe_speed: 3
     },
     Normal: {
         block_space: 4,
-        opening_gap: 4,
+        opening_gap: 5,
         pipe_speed: 4
     },
     Hard: {
@@ -82,11 +82,11 @@ export default class Game {
         this.gameEnded = true;
         console.log(this.bg_music);
         this.bg_music.stop();
-        this.audioPlayer.playSoundFile("./needle_fast.mp3", 2, (src) => {
+        this.audioPlayer.playSoundFile("./needle_fast.mp3", 1, (src) => {
             src.onended = (() => {
                 this.audioPlayer.playSoundFile("./crash.mp3", 1, (crash_src) => {
-                    this.audioPlayer.playSoundFile("./horse_dead.mp3", 1);
-                    this.audioPlayer.playSoundFile("./crying.mp3", 1);
+                    this.audioPlayer.playSoundFile("./horse_dead.mp3", .5);
+                    this.audioPlayer.playSoundFile("./crying.mp3", .5);
                     crash_src.onended = () => {
                         crash_src.context.suspend();
                         let info_string = new URLSearchParams(window.location.search);
@@ -96,7 +96,7 @@ export default class Game {
                         if (isNaN(attempts))
                             attempts = 0;
                         attempts++;
-                        let newHtml = document.getElementById("try_again").innerHTML.replace("{ATTEMPTS}", attempts);
+                        let newHtml = document.getElementById("try_again").innerHTML.replace("{ATTEMPTS}", attempts+"&character="+this.character.playerType.replace("_",""));
                         newHtml = newHtml.replace("{SCORE}", this.character.Score);
                         document.getElementById("try_again").innerHTML = newHtml;
                         document.getElementById("try_again").classList.remove("hidden");
@@ -125,11 +125,11 @@ export default class Game {
                 this.gapSize = LEVEL_SETTINGS.Normal.opening_gap;
                 this.blockSpacing = LEVEL_SETTINGS.Normal.block_space;
                 break;
-            case 15:
+            case 20:
                 this.gapSize = LEVEL_SETTINGS.Hard.opening_gap;
                 this.blockSpacing = LEVEL_SETTINGS.Hard.block_space;
                 break;
-            case 30:
+            case 40:
                 this.gapSize = LEVEL_SETTINGS.Harder.opening_gap;
                 this.blockSpacing = LEVEL_SETTINGS.Harder.block_space;
                 break;
@@ -141,10 +141,10 @@ export default class Game {
             case 5:
                 this.pipeSpeed = LEVEL_SETTINGS.Normal.pipe_speed;
                 break;
-            case 15:
+            case 20:
                 this.pipeSpeed = LEVEL_SETTINGS.Hard.pipe_speed;
                 break;
-            case 30:
+            case 40:
                 this.pipeSpeed = LEVEL_SETTINGS.Harder.pipe_speed;
                 break;
         }
@@ -195,8 +195,13 @@ export default class Game {
                 attempts = parseInt(info_string.get("attempt"));
             if (isNaN(attempts))
                 attempts = 0;
-            if (attempts < 2) {
+            if (attempts == 0) {
                 this.audioPlayer.playSoundFile("./bg_special_2.mp3", 1, (function (src) {
+                    console.log(src);
+                    this.bg_music = src;
+                }).bind(this));
+            }else if (attempts == 1) {
+                this.audioPlayer.playSoundFile("./bg_music_1.mp3", 1, (function (src) {
                     console.log(src);
                     this.bg_music = src;
                 }).bind(this));

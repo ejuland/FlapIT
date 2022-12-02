@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500&display=swap');
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: black;
+        }
+
+        #screen {
+            background-color: green;
+            overflow: hidden;
+        }
+
+        img {
+            visibility: hidden;
+            position: fixed;
+        }
+
+        * {
+            touch-action: manipulation;
+            user-select: none;
+            /* supported by Chrome and Opera */
+            -webkit-user-select: none;
+            /* Safari */
+            -khtml-user-select: none;
+            /* Konqueror HTML */
+            -moz-user-select: none;
+            /* Firefox */
+            -ms-user-select: none;
+            /* Internet Explorer/Edge */
+
+            overflow: hidden;
+
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .game_info {
+            width: 100%;
+            height: 100%;
+            font-size: 35px;
+            text-shadow: 2px 2px rgba(48, 48, 48, 0.322);
+            background-color: white;
+            position: fixed;
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+            text-align: center;
+            color: rgb(46, 46, 46);
+        }
+
+        .game_info a {
+            color: rgb(46, 46, 46);
+            text-decoration: none;
+            margin: 3%;
+            border: 2px solid rgba(46, 46, 46, 0.747);
+        }
+
+        .game_info a:hover {
+            color: rgb(67, 44, 129);
+            text-decoration: none;
+            margin: 3%;
+        }
+
+        #try_again {
+            background-color: pink;
+        }
+
+        .hidden {
+            visibility: hidden;
+        }
+
+        @media only screen and (max-width: 500px) {
+            .game_info {
+                font-size: 25px;
+                text-shadow: 1px 1px rgba(48, 48, 48, 0.322);
+
+            }
+
+            .game_info label {
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <img id="bg" src="https://i.etsystatic.com/30393702/r/il/ce4bd0/3191220689/il_794xN.3191220689_7472.jpg" alt="">
+    <img id="teams" src="./teams.png" alt="">
+    <img id="jason" src="./jason.png" alt="">
+    <img id="frame1" src="./character_frame_1.png" alt="">
+    <img id="frame2" src="./character_frame_2.png" alt="">
+    <img id="frame3" src="./character_frame_3.png" alt="">
+    <img id="outlook" src="./outlook.png" alt="">
+    <img id="clickup" src="./clickup.png" alt="">
+    <img id="brian_1" src="./character_frame_brian_1.png">
+    <img id="brian_2" src="./character_frame_brian_2.png">
+    <img id="brian_3" src="./character_frame_brian_3.png">
+    <img id="caleb_1" src="./character_frame_caleb_1.png">
+    <img id="caleb_2" src="./character_frame_caleb_2.png">
+    <img id="caleb_3" src="./character_frame_caleb_3.png">
+    <img id="jason_1" src="./character_frame_jason_1.png">
+    <img id="jason_2" src="./character_frame_jason_2.png">
+    <img id="jason_3" src="./character_frame_jason_3.png">
+    <img id="kire_1" src="./character_frame_kire_1.png">
+    <img id="kire_2" src="./character_frame_kire_2.png">
+    <img id="kire_3" src="./character_frame_kire_3.png">
+    <img id="todd_1" src="./character_frame_todd_1.png">
+    <img id="todd_2" src="./character_frame_todd_2.png">
+    <img id="todd_3" src="./character_frame_todd_3.png">
+    <img id="mitch_1" src="./character_frame_mitch_1.png">
+    <img id="mitch_2" src="./character_frame_mitch_2.png">
+    <img id="mitch_3" src="./character_frame_mitch_3.png">
+    <img id="sasha_1" src="./character_frame_sasha_1.png">
+    <img id="sasha_2" src="./character_frame_sasha_2.png">
+    <img id="sasha_3" src="./character_frame_sasha_3.png">
+    <div id="try_again" class="game_info hidden">
+        <h1>NOTICE OF TERMINATION</h1>
+        <h2>Score: {SCORE}</h2>
+        <label>We are sorry, but you have failed to help our brave and fearless leaders avoid getting caught up in the
+            mundane. Due to this careless blunder we unfortunatley have to let you go.</label>
+        <a href="./game.html?attempt={ATTEMPTS}">Try Again?</a>
+        <a href="./index.html">Choose New Character</a>
+    </div>
+    <div id="start" class="game_info">
+        <h1>Goal</h1>
+        <label>Tap the screen repeatedly to reach your goal! Don't hit any obstacles along the way.</label>
+        <label>Tap Anywhere to Begin</label>
+    </div>
+    <canvas id="screen"></canvas>
+    <script type="module" src="main.js"></script>
+</body>
+
+</html>

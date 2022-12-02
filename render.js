@@ -2,9 +2,9 @@ export default class Renderer{
     CTX = null;
 
     outlineBounds(bounds){
-        this.CTX.beginPath();
-        this.CTX.rect(bounds.X, bounds.Y, bounds.Width, bounds.Height);
-        this.CTX.stroke();
+        // this.CTX.beginPath();
+        // this.CTX.rect(bounds.X, bounds.Y, bounds.Width, bounds.Height);
+        // this.CTX.stroke();
     }
 
     rotation = 0;
