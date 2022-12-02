@@ -195,7 +195,7 @@ export default class Game {
                 attempts = parseInt(info_string.get("attempt"));
             if (isNaN(attempts))
                 attempts = 0;
-            if (attempts < 3) {
+            if (attempts < 2) {
                 this.audioPlayer.playSoundFile("./bg_special_2.mp3", 1, (function (src) {
                     console.log(src);
                     this.bg_music = src;
