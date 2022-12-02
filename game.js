@@ -59,6 +59,7 @@ export default class Game {
     started = false;
     totalPipesPassed = 0;
     pipeSpeed = 3.5;
+    gameEnded = false;
     update() {
         this.resize();
         this.ScreenBounds = new Bounds(0, 0, this.WIDTH, this.HEIGHT)
@@ -72,6 +73,39 @@ export default class Game {
             }
         });
         this.removeUsedPipes();
+        if (!this.character.isAlive && !this.gameEnded) {
+            this.endGame();
+        }
+    }
+
+    endGame() {
+        this.gameEnded = true;
+        console.log(this.bg_music);
+        this.bg_music.stop();
+        this.audioPlayer.playSoundFile("./needle_fast.mp3", 2, (src) => {
+            src.onended = (() => {
+                this.audioPlayer.playSoundFile("./crash.mp3", 1, (crash_src) => {
+                    this.audioPlayer.playSoundFile("./horse_dead.mp3", 1);
+                    this.audioPlayer.playSoundFile("./crying.mp3", 1);
+                    crash_src.onended = () => {
+                        crash_src.context.suspend();
+                        let info_string = new URLSearchParams(window.location.search);
+                        let attempts = 0;
+                        if (info_string.has("attempt"))
+                            attempts = parseInt(info_string.get("attempt"));
+                        if (isNaN(attempts))
+                            attempts = 0;
+                        attempts++;
+                        let newHtml = document.getElementById("try_again").innerHTML.replace("{ATTEMPTS}", attempts);
+                        newHtml = newHtml.replace("{SCORE}", this.character.Score);
+                        document.getElementById("try_again").innerHTML = newHtml;
+                        document.getElementById("try_again").classList.remove("hidden");
+                        console.log("the_end");
+                        window.clearInterval(this.GameLoopInterval);
+                    };
+                })
+            });
+        });
     }
 
     render() {
@@ -149,12 +183,36 @@ export default class Game {
         return missingPipes;
     }
 
+    bg_music = null;
     handleInput() {
         if (!this.started) {
             this.started = true;
             this.GameLoopInterval = setInterval(this.gameLoop.bind(this), (1000 / TARGET_FPS));
             this.audioPlayer = new AudioAssetPlayer();
-            this.audioPlayer.playSoundFile("./bg_music_" + (Math.ceil(Math.random() * 4)) + ".mp3");
+            let info_string = new URLSearchParams(window.location.search);
+            let attempts = 0;
+            if (info_string.has("attempt"))
+                attempts = parseInt(info_string.get("attempt"));
+            if (isNaN(attempts))
+                attempts = 0;
+            if (attempts < 3) {
+                this.audioPlayer.playSoundFile("./bg_special_2.mp3", 1, (function (src) {
+                    console.log(src);
+                    this.bg_music = src;
+                }).bind(this));
+            }
+            else if (attempts%5 == 0) {
+                this.audioPlayer.playSoundFile("./bg_special_" + (Math.ceil(Math.random() * 3)) + ".mp3", 1, (function (src) {
+                    console.log(src);
+                    this.bg_music = src;
+                }).bind(this));
+            } else {
+                this.audioPlayer.playSoundFile("./bg_music_" + (Math.ceil(Math.random() * 3)) + ".mp3", 1, (function (src) {
+                    console.log(src);
+                    this.bg_music = src;
+                }).bind(this));
+            }
+            document.getElementById("start").classList.add("hidden");
         }
         if (this.character.JumpingFrames > 0)
             return;
@@ -175,19 +233,24 @@ export default class Game {
 
         this.SCREEN = screen;
         this.CTX = this.SCREEN.getContext("2d");
-        if (this.isMobile)
-            this.CTX.scale(window.devicePixelRatio, window.devicePixelRatio);
+        this.CTX.scale(window.devicePixelRatio, window.devicePixelRatio);
         this.renderer = new Renderer(this.CTX);
         this.resize();
         this.ScreenBounds = new Bounds(0, 0, this.WIDTH, this.HEIGHT)
         this.blockSize = (this.ScreenBounds.Height / 10);
         this.character = new Character(!this.isMobile ? this.ScreenBounds.Width / 2 : this.blockSize, Math.floor(Math.random() * 300), this.blockSize);
         this.setSpacingAndGap();
+        let startingOffset = (((this.ScreenBounds.Width - this.blockSize) + (this.isMobile ? 500 : 1000)));
+        console.log("Starting Offset:" + startingOffset);
+        console.log("Device Width:" + this.WIDTH);
+        console.log("Pixel Ratiot:" + window.devicePixelRatio);
+        console.log("Block Size:" + this.BLOCK_SIZE);
+        console.log("Is Mobile:" + this.isMobile);
         for (let pipes = 0; pipes < 5; pipes++)
-            this.createPipe((((this.ScreenBounds.Width - this.blockSize) + this.isMobile ? 500 : 1000)) + pipes * this.blockSize * this.blockSpacing);
+            this.createPipe(startingOffset + (pipes * this.blockSize * this.blockSpacing));
         window.addEventListener("keyup", this.handleInput.bind(this), false);
         window.addEventListener("mousedown", this.handleInput.bind(this), false);
-        this.SCREEN.addEventListener("touchend", this.handleInput.bind(this), false);
-        this.SCREEN.addEventListener("click", this.handleInput.bind(this), false);
+        window.addEventListener("touchend", this.handleInput.bind(this), false);
+        window.addEventListener("click", this.handleInput.bind(this), false);
     }
 }

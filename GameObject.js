@@ -155,6 +155,8 @@ export class Pipe extends GameObject {
     collidedWithPlayer = false;
     awardedToPlayer = false;
 
+
+
     update(ScreenBounds, Character, AudioPlayer, speed = 3.5) {
         if (this.offScreenLeft) {
             return;

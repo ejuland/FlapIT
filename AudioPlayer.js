@@ -40,10 +40,12 @@ export class AudioAssetPlayer {
         request.send();
     }
 
-    playSoundFile(file, volume){
+    playSoundFile(file, volume, callback = null){
         this.loadAudioAsset(file, (buffer)=>{
             let src = this.sourceFromBuffer(buffer, volume);
             src.start();
+            if(callback)
+                callback(src);
         });
     }
 
