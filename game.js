@@ -24,6 +24,11 @@ const LEVEL_SETTINGS = {
         block_space: 4,
         opening_gap: 3,
         pipe_speed: 6
+    },
+    Hardest: {
+        block_space: 4,
+        opening_gap: 3,
+        pipe_speed: 8
     }
 }
 
@@ -133,6 +138,10 @@ export default class Game {
                 this.gapSize = LEVEL_SETTINGS.Harder.opening_gap;
                 this.blockSpacing = LEVEL_SETTINGS.Harder.block_space;
                 break;
+            case 60:
+                this.gapSize = LEVEL_SETTINGS.Hardest.opening_gap;
+                this.blockSpacing = LEVEL_SETTINGS.Hardest.block_space;
+            break;
         }
         switch (this.totalPipesPassed) {
             case 0:
@@ -147,6 +156,9 @@ export default class Game {
             case 40:
                 this.pipeSpeed = LEVEL_SETTINGS.Harder.pipe_speed;
                 break;
+            case 40:
+                    this.pipeSpeed = LEVEL_SETTINGS.Hardest.pipe_speed;
+            break;
         }
     }
 
