@@ -101,7 +101,13 @@ export default class Game {
                         if (isNaN(attempts))
                             attempts = 0;
                         attempts++;
-                        let newHtml = document.getElementById("try_again").innerHTML.replace("{ATTEMPTS}", attempts+"&character="+this.character.playerType.replace("_",""));
+                        let usedQR = false;
+                        if (info_string.has("QR"))
+                            usedQR = info_string.get("QR") === 'true';
+                        console.log(usedQR ? "Used QR CODE" : "DIDNT USE QR CODE", info_string.get("QR"));
+                        if(usedQR)
+                            document.getElementById('QR').classList.remove("hidden");
+                        let newHtml = document.getElementById("try_again").innerHTML.replace("{ATTEMPTS}", attempts + "&character=" + this.character.playerType.replace("_", ""));
                         newHtml = newHtml.replace("{SCORE}", this.character.Score);
                         document.getElementById("try_again").innerHTML = newHtml;
                         document.getElementById("try_again").classList.remove("hidden");
@@ -141,7 +147,7 @@ export default class Game {
             case 60:
                 this.gapSize = LEVEL_SETTINGS.Hardest.opening_gap;
                 this.blockSpacing = LEVEL_SETTINGS.Hardest.block_space;
-            break;
+                break;
         }
         switch (this.totalPipesPassed) {
             case 0:
@@ -157,8 +163,8 @@ export default class Game {
                 this.pipeSpeed = LEVEL_SETTINGS.Harder.pipe_speed;
                 break;
             case 40:
-                    this.pipeSpeed = LEVEL_SETTINGS.Hardest.pipe_speed;
-            break;
+                this.pipeSpeed = LEVEL_SETTINGS.Hardest.pipe_speed;
+                break;
         }
     }
 
@@ -212,13 +218,13 @@ export default class Game {
                     console.log(src);
                     this.bg_music = src;
                 }).bind(this));
-            }else if (attempts == 0) {
+            } else if (attempts == 0) {
                 this.audioPlayer.playSoundFile("./bg_special_4.mp3", 2, (function (src) {
                     console.log(src);
                     this.bg_music = src;
                 }).bind(this));
             }
-            else if (attempts%2 == 0) {
+            else if (attempts % 2 == 0) {
                 this.audioPlayer.playSoundFile("./bg_special_" + (Math.ceil(Math.random() * 4)) + ".mp3", 1, (function (src) {
                     console.log(src);
                     this.bg_music = src;

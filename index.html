@@ -114,12 +114,12 @@
             background-image: url("./caleb.png");
             background-color: #E5B237;
         }
-        
+
         .jason {
             background-image: url("./jason.png");
             background-color: rgb(134, 209, 198);
         }
-        
+
         .kire {
             background-image: url("./kire.png");
             background-color: #D17159;
@@ -134,15 +134,17 @@
             background-image: url("./mitch.png");
             background-color: #E5B237;
         }
-        
+
         .lynsey {
             background-image: url("./lynsey.png");
             background-color: #D17159;
         }
+
         .sasha {
             background-image: url("./sasha.png");
             background-color: #F3EDF8;
         }
+
         .linda {
             background-image: url("./linda.png");
             background-color: #281E3B;
@@ -171,40 +173,47 @@
         <a href="./game.html?attempt={ATTEMPTS}">Try Again?</a>
     </div>
     <div id="wait" class="game_info ">
-        <label>(Double Tap to Continue)<br> Wait for it... </label>
+        <label>(Double Tap to Continue)<br> Turn on your ringer, crank up the volume, and then wait for it... </label>
     </div>
     <div id="start" class="game_info ">
         <h1>OFFER OF EMPLOYMENT</h1>
         <label>The holidays can be a rough time to balance work and family. To assist with that, you have been hired to
             help navigate one of our brave supervisors through daily mundane tasks on the wings of Victory! Don't
             disappoint us! Their Christmas depends on you!</label>
-            <label>Tap Anywhere to Begin</label>
+        <label>Tap Anywhere to Begin</label>
+    </div>
+    <div id="character_select">
+        <h1>Select a Supervisor That You Want to Help Navigate the Christmas Crazy!</h1>
+        <div id="characters_container">
+            <a class="character_link brian" href="./game.html?character=brian"> </a>
+            <a class="character_link caleb" href="./game.html?character=caleb"></a>
+            <a class="character_link jason" href="./game.html?character=jason"></a>
+            <a class="character_link lynsey" href="./game.html?character=lynsey"></a>
+            <a class="character_link kire" href="./game.html?character=kire"></a>
+            <a class="character_link linda" href="./game.html?character=linda"></a>
+            <a class="character_link todd" href="./game.html?character=todd"></a>
+            <a class="character_link mitch" href="./game.html?character=mitch"></a>
+            <a class="character_link sasha" href="./game.html?character=sasha"></a>
         </div>
-        <div id="character_select">
-            <h1>Select a Supervisor That You Want to Help Navigate the Christmas Crazy!</h1>
-            <div id="characters_container">
-                <a class="character_link brian" href="./game.html?character=brian"> </a>
-                <a class="character_link caleb" href="./game.html?character=caleb"></a>
-                <a class="character_link jason" href="./game.html?character=jason"></a>
-                <a class="character_link lynsey" href="./game.html?character=lynsey"></a>
-                <a class="character_link kire" href="./game.html?character=kire"></a>
-                <a class="character_link linda" href="./game.html?character=linda"></a>
-                <a class="character_link todd" href="./game.html?character=todd"></a>
-                <a class="character_link mitch" href="./game.html?character=mitch"></a>
-                <a class="character_link sasha" href="./game.html?character=sasha"></a>
-            </div>
-        </div>
+    </div>
 
     <script type="module">
         import { AudioAssetPlayer } from "./AudioPlayer.js";
         let started = false;
         function handleInput() {
-            if(started)
+            if (started)
                 return;
             started = true;
             let AudioPlayer = new AudioAssetPlayer();
             AudioPlayer.playSoundFile("character_select.mp3", 2);
             document.getElementById("start").classList.add("hidden")
+            let info_string = new URLSearchParams(window.location.search);
+            let usedQR = false;
+            if (info_string.has("QR"))
+                usedQR = info_string.get("QR")=== 'true';
+            console.log(usedQR ? "Used QR CODE" : "DIDNT USE QR CODE", info_string.get("QR"));
+            if(usedQR)
+                [].concat(...document.querySelectorAll("a")).forEach(anchor=>anchor.href+="&QR="+usedQR);
             setTimeout(() => {
                 document.getElementById("wait").classList.add("hidden")
                 AudioPlayer.playSoundFile("choose_character.mp3", 1);
